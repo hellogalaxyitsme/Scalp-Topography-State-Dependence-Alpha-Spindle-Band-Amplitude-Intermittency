@@ -77,6 +77,7 @@ python3 scripts/ppc_stability.py
 python3 scripts/analyze_bursts.py
 python3 scripts/analyze_bursts_retest.py
 python3 scripts/descriptor_benchmark.py                    # model coordinates against direct envelope statistics
+python3 scripts/direct_fit_baseline.py                     # direct fit of the stationary power density as a baseline
 
 # 7. State axis
 python3 scripts/displacements.py
@@ -99,6 +100,7 @@ python3 scripts/mech_sleep_control.py anphy $NJ             # second twins for t
 python3 scripts/mech_sleep_control.py sleep $NJ
 python3 scripts/mech_twin_broad.py                          # intrinsic (additive + state-dependent noise) vs fast; TDBRAIN healthy reference sample
 python3 scripts/mech_twin_summary.py
+python3 scripts/mech_state_checks.py                       # state changes at matched delta, credible peaks, support, SNR
 
 # 9. Analysis populations
 python3 scripts/population_counts.py

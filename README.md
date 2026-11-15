@@ -85,15 +85,18 @@ NJ=16 bash run_pipeline.sh      # NJ: number of worker processes for the paralle
 | 3. Posteriors and simulated support | `nf_apply.py`, `ood_matched.py`, `coverage_rows.py`, `coverage_anphy.py` | `post_*.csv`, `coverage_*.csv` |
 | 4. Dataset analyses | `analyze_nf_tdbrain.py`, `analyze_sleep.py`, `analyze_anphy.py`, `analyze_mumtaz.py`, `analyze_ds003478.py`, `fold_stats.py`, `fold_calibration.py` | per-dataset summaries, fold calibration |
 | 5. Topography, montage variants and peak selection | `topo_tdbrain.py`, `snr_adjusted_topo.py`, `variants_summary.py`, `peak_sensitivity.py`, `twin_checks.py` | `topo_tdbrain*.json`, `snradj_tdbrain.json`, `peak_sensitivity.json`, `twin_checks.json` |
-| 6. Bursts and direct envelope statistics | `run_bursts_tdbrain.py`, `ppc_bursts.py`, `ppc_stability.py`, `analyze_bursts.py`, `analyze_bursts_retest.py`, `descriptor_benchmark.py` | `bursts_*`, `ppc_stability.json`, `descriptor_benchmark.json` |
+| 6. Bursts, direct envelope statistics and direct-fit baseline | `run_bursts_tdbrain.py`, `ppc_bursts.py`, `ppc_stability.py`, `analyze_bursts.py`, `analyze_bursts_retest.py`, `descriptor_benchmark.py`, `direct_fit_baseline.py` | `bursts_*`, `ppc_stability.json`, `descriptor_benchmark.json`, `direct_fit_baseline.json` |
 | 7. State axis | `displacements.py`, `state_axis.py`, `axis_snr_check.py`, `sim_alternatives.py`, `axis_perturbations.py`, `robustness_axis.py`, `state_axis_joint.py`, `axis_covariates.py` | `state_axis_joint.json`, `robustness_axis_joint.json` |
-| 8. Mechanism discrimination | `mech_classifier.py`, `mech_domain.py`, `sbi_twinbank.py`, `mech_twin.py`, `mech_sleep_control.py`, `mech_twin_broad.py`, `mech_twin_summary.py` | `mech_twin_broad.json`, `mechtwb_*.csv` |
+| 8. Mechanism discrimination | `mech_classifier.py`, `mech_domain.py`, `sbi_twinbank.py`, `mech_twin.py`, `mech_sleep_control.py`, `mech_twin_broad.py`, `mech_twin_summary.py`, `mech_state_checks.py` | `mech_twin_broad.json`, `mechtwb_*.csv`, `mech_state_checks.json` |
 | 9. Analysis populations | `population_counts.py` | `population_counts.json` |
 
 Notes on stage 8:
 - `mech_classifier.py` and `mech_domain.py` train a classifier on the raw summary statistics. They also show that simulations and empirical surrogates are separable on these statistics.
 - The empirical classifiers are therefore trained on differences between each signal and its own IAAFT twin.
 - `mech_twin_broad.py` contrasts two intrinsic classes, additive noise and state-dependent noise, with fast modulation of excitability. It also trains a three-class version and evaluates empirical negative controls (the difference between two independent twins).
+- `mech_state_checks.py` tests whether the state changes of the empirical probabilities persist at matched fold distance, for credible spectral peaks, within the simulated support and at zero change in the estimated signal-to-background ratio.
+
+`direct_fit_baseline.py` compares the simulation-based estimates with the closed-form maximum-likelihood fit of the stationary power density, with and without background deconvolution, on held-out simulations and on the empirical endpoints of `descriptor_benchmark.py`.
 
 ## Computation and reproducibility
 

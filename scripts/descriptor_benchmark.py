@@ -145,14 +145,15 @@ def main():
         else:
             P = P[~P.ch.str.contains("-")]
         P = add_measures(P[P.stage.isin(["W", "N2"])].copy())
-        if t == "sleep_sigma":
-            P["rec"] = P.rec.str[:5]   # subject (nights pooled at the piece level)
         k = ["rec", "ch", "stage", "chunk"]
         Dd = P[P.kind == "data"].set_index(k)[DESC + MODEL]; Tt = P[P.kind == "iaaft0"].set_index(k)[DESC + MODEL]
         J = Dd.join(Tt, rsuffix="_tw", how="left")
         for m in DESC + MODEL:
             J[m + "_ref"] = J[m] - J[m + "_tw"]
-        G = J.groupby(level=["rec", "stage"]).mean().reset_index().pivot_table(index="rec", columns="stage", values=meas)
+        J = J.reset_index()
+        if t == "sleep_sigma":
+            J["rec"] = J.rec.str[:5]   # subject: both nights pooled at the piece level, after matching twins per night
+        G = J.groupby(["rec", "stage"])[meas].mean().reset_index().pivot_table(index="rec", columns="stage", values=meas)
         sl[t] = {}
         for m in meas:
             x = (G[(m, "N2")] - G[(m, "W")]).dropna().values
