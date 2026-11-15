@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+.env
+
+# Data, caches and outputs (never committed)
+data/
+tmp/
+cache_anphy/
+results/
+*.joblib
+*.npy
+*.npz
+*.edf
+*.bdf
+*.zip
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

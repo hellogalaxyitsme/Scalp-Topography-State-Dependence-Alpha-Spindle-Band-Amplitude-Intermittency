@@ -1,0 +1,11 @@
+# Exact versions of the reference environment (Python 3.10.12)
+numpy==2.2.6
+scipy==1.15.3
+pandas==2.3.3
+scikit-learn==1.7.2
+numba==0.65.1
+joblib==1.5.3
+mne==1.10.2
+statsmodels==0.14.6
+antropy==0.2.2
+openpyxl==3.1.5
