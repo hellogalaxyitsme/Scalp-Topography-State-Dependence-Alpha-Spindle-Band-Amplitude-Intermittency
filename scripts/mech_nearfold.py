@@ -1,8 +1,9 @@
 """Near-fold comparison of EEG and simulations with one selection interval for both (estimated delta between -1.5
 and 1) and participant-grouped cross-validation of the domain classifiers: all channels and pieces of a participant
 (both nights of a Sleep-EDF participant) stay in the same fold, simulations are independent. Classifier scores of
-the main classifier of mech_twin_broad.py (isotonic calibration on simulations); negative controls (twin minus an
-independent twin) against simulated deep foci with grouped folds.
+the main classifier of mech_twin_broad.py (isotonic calibration on simulations) for held-out simulations of every
+class selected by estimated delta (deep foci: true delta < -3) and for near-fold EEG; negative controls (twin minus
+an independent twin) against simulated deep foci with grouped folds.
 usage: python scripts/mech_nearfold.py  -> results/mech_nearfold.json, results/mech_nearfold_points.csv"""
 import json, joblib, numpy as np, pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -20,11 +21,11 @@ def unit_of(t, D):
     return D["sub"] if t == "tdbrain" else (D.rec.str[:5] if t.startswith("sleep") else D.rec)
 
 
-def domain(A, B, gb, grouped, n=6000):
+def domain(A, B, gb, grouped, cols=DCOLS, n=6000):
     """Cross-validated AUC separating A (simulations, independent) from B (EEG or controls, groups gb)."""
     ia = np.random.default_rng(1).permutation(len(A))[:min(n, len(A), len(B))]
     ib = np.random.default_rng(1).permutation(len(B))[:len(ia)]
-    X = np.vstack([A[DCOLS].values[ia], B[DCOLS].values[ib]])
+    X = np.vstack([A[cols].values[ia], B[cols].values[ib]])
     y = np.r_[np.zeros(len(ia)), np.ones(len(ib))]
     g = np.r_[-1 - np.arange(len(ia)), pd.factorize(np.asarray(gb)[ib])[0]]
     cv = StratifiedGroupKFold(5, shuffle=True, random_state=0) if grouped else StratifiedKFold(5, shuffle=True, random_state=0)
@@ -42,12 +43,21 @@ def main():
         C = {}
         for k in ("intrinsic", "mult", "fast"):
             d = load(cfg, k)
+            d["split"] = np.random.default_rng(0 if k != "mult" else 7).choice(["tr", "cal", "te"], len(d), p=[0.8, 0.1, 0.1])
             pr = predict(reg, d)
             d["d_hat"] = fold_delta(pr.th_mu_q50.values, pr.th_c_q50.values); d["d_true"] = fold_delta(d.th_mu.values, d.th_c.values)
             C[k] = d
         near_sim = {k: d[d.d_hat.between(*NEAR)] for k, d in C.items()}
         deep = C["intrinsic"][C["intrinsic"].d_true < -2.5]
         r = {"simulations near fold, median estimated delta": {k: float(d.d_hat.median()) for k, d in near_sim.items()}}
+        held = {"deep focus, additive": C["intrinsic"][(C["intrinsic"].split == "te") & (C["intrinsic"].d_true < -3)]}
+        held.update({f"near-fold estimate, {lab}": near_sim[k][near_sim[k].split == "te"]
+                     for k, lab in (("intrinsic", "additive"), ("mult", "multiplicative"), ("fast", "fast modulation"))})
+        r["held-out simulations"] = {}
+        for lab, d in held.items():
+            s = score(d)
+            r["held-out simulations"][lab] = dict(n=int(len(d)), mean_score=float(s.mean()), frac_gt_0_5=float((s > 0.5).mean()))
+            pts += [dict(cfg=cfg, category=lab, p=v) for v in s]
         for t, keys in tables.items():
             P = pd.read_csv(f"results/post_{t}.csv")
             if t == "tdbrain":
