@@ -1,8 +1,9 @@
 """Posterior predictive burst statistics with parameter uncertainty: as ppc_bursts.py, but each realization uses
 coordinates drawn from the recording's posterior. For mu_t, c_t and log10 t0, a value is drawn from the piecewise-
-linear quantile function through the posterior quantiles (5, 25, 50, 75 and 95%, extrapolated linearly to 0 and 100%),
-with independent draws for the three coordinates; background exponent, SNR and peak frequency are kept at their
-estimates.
+linear quantile function through the marginal posterior quantiles (5, 25, 50, 75 and 95%; the 0 and 100% points lie a
+quarter of the adjacent quantile spacing beyond the 5 and 95% quantiles), with independent draws for the three
+coordinates, so dependence between them is not preserved; background exponent, SNR and peak frequency are kept at
+their estimates.
 usage: python scripts/ppc_posterior.py <n_jobs> <n_draws> [retest]
        -> results/bursts_ppc_post.csv or results/bursts_ppc_post_retest.csv"""
 import sys, glob, numpy as np, pandas as pd

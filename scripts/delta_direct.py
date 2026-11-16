@@ -2,7 +2,9 @@
 bank (same summaries, splits and conformal calibration as sbi_fit.py), compared with the plug-in estimate from the
 posterior medians of mu_t and c_t on the held-out simulations (whole prior and healthy-alpha region), and applied to
 the empirical summaries: eye opening (TDBRAIN healthy adults, 26-channel map and O1/Oz/O2/Pz mean) and N2 minus
-wakefulness in the spindle band (ANPHY-Sleep scalp channels, Sleep-EDF Fpz-Cz).
+wakefulness in the spindle band (ANPHY-Sleep scalp channels, Sleep-EDF Fpz-Cz). Effect sizes average pieces and
+channels within participant as descriptor_benchmark.py; cluster maps use the aggregation and permutation seeds of
+topo_tdbrain.py and analyze_anphy.py (ANPHY-Sleep pieces summarized by their median per night, channel and stage).
 usage: python scripts/delta_direct.py <n_perm>  -> results/delta_direct.json"""
 import sys, json, numpy as np, pandas as pd, mne
 from scipy.stats import spearmanr
@@ -68,8 +70,8 @@ def main():
     # eye opening, TDBRAIN healthy adults, first session
     P = pd.read_csv("results/post_tdbrain.csv", usecols=["sub", "ses", "task", "ch", "kind", "th_mu_q50", "th_c_q50"] + FEATURES)
     P = P[(P.kind == "data") & (P.ses == "ses-1")].replace([np.inf, -np.inf], np.nan).dropna(subset=FEATURES)
-    meta = load_meta(); m1 = meta[meta.sessID == 1].drop_duplicates("sub")[["sub", "indication", "age"]]
-    P = P.merge(m1, on="sub"); P = P[(P.indication == "HEALTHY") & (P.age >= 18)].copy()
+    meta = load_meta(); m1 = meta[meta.sessID == 1].drop_duplicates("sub")[["sub", "indication", "age", "gender"]]
+    P = P.merge(m1, on="sub"); P = P[(P.indication == "HEALTHY") & (P.age >= 18) & P.gender.notna()].copy()
     P["plug"] = fold_delta(P.th_mu_q50.values, P.th_c_q50.values)
     P["direct"] = predict_delta(models["alpha"], P[FEATURES].values)[:, 2]
     mont = mne.channels.make_standard_montage("standard_1020").get_positions()["ch_pos"]
@@ -101,9 +103,9 @@ def main():
             if chf is None:
                 ps = positions(); scalp = [c for c in sorted(S.ch.unique()) if c in ps]
                 adj2 = channel_adjacency(scalp, ps)
-                w = S[S.ch.isin(scalp)].groupby(["rec", "ch", "stage"])[est].mean().unstack().dropna()
+                w = S[S.ch.isin(scalp)].groupby(["rec", "ch", "stage"])[est].median().unstack()
                 D = (w["N2"] - w["W"]).unstack("ch").reindex(columns=scalp)
-                _, cl = cluster_test(D.values, adj2, n_perm=NPERM, seed=1)
+                _, cl = cluster_test(D.values, adj2, n_perm=NPERM, seed=3)
                 e["clusters"] = [dict(sign=c["sign"], n_channels=len(c["channels"]), p=c["p"]) for c in cl if c["p"] < 0.05]
             r[est] = e
         sl[t] = r

@@ -118,3 +118,7 @@ python3 scripts/ppc_recovery.py $NJ 600 2                  # burst predictions i
 python3 scripts/ppc_posterior.py $NJ 50                    # burst predictions with posterior draws
 python3 scripts/ppc_posterior.py $NJ 50 retest
 python3 scripts/sensitivity_checks.py 2000
+python3 scripts/spatial_benchmark.py 2000                  # scalp maps of coordinates and direct statistics
+python3 scripts/adjusted_topo_spectral.py 5000             # eye opening at zero change in peak height or background fraction
+python3 scripts/mech_nearfold.py                           # common near-fold selection, participant-grouped domain classifiers
+python3 scripts/metadata_checks.py                         # retest interval, treatment records, formal MDD diagnosis

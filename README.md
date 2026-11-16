@@ -90,7 +90,7 @@ NJ=16 bash run_pipeline.sh      # NJ: number of worker processes for the paralle
 | 7. State axis | `displacements.py`, `state_axis.py`, `axis_snr_check.py`, `sim_alternatives.py`, `axis_perturbations.py`, `robustness_axis.py`, `state_axis_joint.py`, `axis_covariates.py` | `state_axis_joint.json`, `robustness_axis_joint.json` |
 | 8. Mechanism discrimination | `mech_classifier.py`, `mech_domain.py`, `sbi_twinbank.py`, `mech_twin.py`, `mech_sleep_control.py`, `mech_twin_broad.py`, `mech_twin_summary.py`, `mech_state_checks.py` | `mech_twin_broad.json`, `mechtwb_*.csv`, `mech_state_checks.json` |
 | 9. Analysis populations | `population_counts.py` | `population_counts.json` |
-| 10. Sensitivity analyses | `tdbrain_checks.py`, `sleep_checks.py`, `delta_direct.py`, `ppc_recovery.py`, `ppc_posterior.py`, `sensitivity_checks.py` | `post_tdbrain_checks.csv`, `post_sleep_checks_*.csv`, `delta_direct.json`, `bursts_ppc_recovery.csv`, `bursts_ppc_post*.csv`, `sensitivity_checks.json` |
+| 10. Sensitivity analyses | `tdbrain_checks.py`, `sleep_checks.py`, `delta_direct.py`, `ppc_recovery.py`, `ppc_posterior.py`, `sensitivity_checks.py`, `spatial_benchmark.py`, `adjusted_topo_spectral.py`, `mech_nearfold.py`, `metadata_checks.py` | `post_tdbrain_checks.csv`, `post_sleep_checks_*.csv`, `delta_direct.json`, `bursts_ppc_recovery.csv`, `bursts_ppc_post*.csv`, `sensitivity_checks.json`, `spatial_benchmark.json`, `adjusted_topo_spectral.json`, `mech_nearfold.json`, `metadata_checks.json` |
 
 Notes on stage 8:
 - `mech_classifier.py` and `mech_domain.py` train a classifier on the raw summary statistics. They also show that simulations and empirical surrogates are separable on these statistics.
@@ -105,6 +105,10 @@ Stage 10:
 - `delta_direct.py` trains a direct estimator of the fold distance and compares it with the plug-in estimate from the posterior medians.
 - `ppc_recovery.py` and `ppc_posterior.py` test the burst predictions in simulations with known parameters and with draws from the posterior.
 - `sensitivity_checks.py` collects these analyses with cluster tests on standardized effects, state-axis variants, sleep derivations and the μ̃ effects.
+- `spatial_benchmark.py` compares the scalp maps of the state effects for the model coordinates and the direct statistics.
+- `adjusted_topo_spectral.py` repeats the SNR-adjusted eye-opening map with directly measured spectral covariates and reports the recovery of the estimated SNR.
+- `mech_nearfold.py` selects near-fold EEG and simulations with one interval and cross-validates the domain classifiers with participant-grouped folds.
+- `metadata_checks.py` describes the test-retest interval and treatment records and repeats the MDD contrast for participants with a recorded formal diagnosis.
 
 `direct_fit_baseline.py` compares the simulation-based estimates with the closed-form maximum-likelihood fit of the stationary power density, with and without background deconvolution, on held-out simulations and on the empirical endpoints of `descriptor_benchmark.py`.
 
