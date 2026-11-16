@@ -39,6 +39,7 @@ requirements.txt        exact versions of the reference environment
 | `summ.py` | The 91 summary statistics used for inference (`FEATURES`) |
 | `pipeline.py` | Channel-level spectrum on artifact-free data |
 | `bursts.py` | Burst detection and burst statistics |
+| `dfa.py` | Detrended fluctuation analysis of the amplitude envelope within artifact-free runs |
 | `stats.py` | Normative models, bootstrap and permutation statistics, false discovery rate, channel adjacency, cluster-based permutation tests (paired and covariate-adjusted with Freedman–Lane sign flipping) |
 | `csd.py` | Surface Laplacian as a linear operator (spherical splines, MNE) |
 | `chaos.py` | Surrogate-referenced complexity indices, computed together with the spectral covariates |
@@ -89,12 +90,21 @@ NJ=16 bash run_pipeline.sh      # NJ: number of worker processes for the paralle
 | 7. State axis | `displacements.py`, `state_axis.py`, `axis_snr_check.py`, `sim_alternatives.py`, `axis_perturbations.py`, `robustness_axis.py`, `state_axis_joint.py`, `axis_covariates.py` | `state_axis_joint.json`, `robustness_axis_joint.json` |
 | 8. Mechanism discrimination | `mech_classifier.py`, `mech_domain.py`, `sbi_twinbank.py`, `mech_twin.py`, `mech_sleep_control.py`, `mech_twin_broad.py`, `mech_twin_summary.py`, `mech_state_checks.py` | `mech_twin_broad.json`, `mechtwb_*.csv`, `mech_state_checks.json` |
 | 9. Analysis populations | `population_counts.py` | `population_counts.json` |
+| 10. Sensitivity analyses | `tdbrain_checks.py`, `sleep_checks.py`, `delta_direct.py`, `ppc_recovery.py`, `ppc_posterior.py`, `sensitivity_checks.py` | `post_tdbrain_checks.csv`, `post_sleep_checks_*.csv`, `delta_direct.json`, `bursts_ppc_recovery.csv`, `bursts_ppc_post*.csv`, `sensitivity_checks.json` |
 
 Notes on stage 8:
 - `mech_classifier.py` and `mech_domain.py` train a classifier on the raw summary statistics. They also show that simulations and empirical surrogates are separable on these statistics.
 - The empirical classifiers are therefore trained on differences between each signal and its own IAAFT twin.
 - `mech_twin_broad.py` contrasts two intrinsic classes, additive noise and state-dependent noise, with fast modulation of excitability. It also trains a three-class version and evaluates empirical negative controls (the difference between two independent twins).
 - `mech_state_checks.py` tests whether the state changes of the empirical probabilities persist at matched fold distance, for credible spectral peaks, within the simulated support and at zero change in the estimated signal-to-background ratio.
+- `mech_drivers.py` groups the summary statistics into families and measures how much each family contributes to the classifier and to the separation of EEG from simulations.
+
+Stage 10:
+- `tdbrain_checks.py` builds linear twins whose peak frequency and background fraction are re-estimated on the twin, and computes the DFA exponent of the alpha envelope.
+- `sleep_checks.py` recomputes the spindle-band statistics in a fixed 11.5–14.5 Hz band, independent of the selected peak.
+- `delta_direct.py` trains a direct estimator of the fold distance and compares it with the plug-in estimate from the posterior medians.
+- `ppc_recovery.py` and `ppc_posterior.py` test the burst predictions in simulations with known parameters and with draws from the posterior.
+- `sensitivity_checks.py` collects these analyses with cluster tests on standardized effects, state-axis variants, sleep derivations and the μ̃ effects.
 
 `direct_fit_baseline.py` compares the simulation-based estimates with the closed-form maximum-likelihood fit of the stationary power density, with and without background deconvolution, on held-out simulations and on the empirical endpoints of `descriptor_benchmark.py`.
 

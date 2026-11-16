@@ -101,6 +101,20 @@ python3 scripts/mech_sleep_control.py sleep $NJ
 python3 scripts/mech_twin_broad.py                          # intrinsic (additive + state-dependent noise) vs fast; TDBRAIN healthy reference sample
 python3 scripts/mech_twin_summary.py
 python3 scripts/mech_state_checks.py                       # state changes at matched delta, credible peaks, support, SNR
+python3 scripts/mech_drivers.py                            # summary-statistic families behind the classifier and domain separation
 
 # 9. Analysis populations
 python3 scripts/population_counts.py
+
+# 10. Sensitivity analyses
+python3 scripts/tdbrain_checks.py $NJ                      # twins with re-estimated peak and background; DFA
+python3 scripts/nf_apply.py results/sbi_alpha_full.joblib    results/tdbrain_checks      results/post_tdbrain_checks.csv
+python3 scripts/sleep_checks.py sleep $NJ                  # fixed 11.5-14.5 Hz band; DFA
+python3 scripts/nf_apply.py results/sbi_sigma250_full.joblib results/sleep_checks_sleep  results/post_sleep_checks_sleep.csv
+python3 scripts/sleep_checks.py anphy $NJ
+python3 scripts/nf_apply.py results/sbi_sigma250_full.joblib results/sleep_checks_anphy  results/post_sleep_checks_anphy.csv
+python3 scripts/delta_direct.py 2000                       # direct estimator of the fold distance
+python3 scripts/ppc_recovery.py $NJ 600 2                  # burst predictions in simulations with known parameters
+python3 scripts/ppc_posterior.py $NJ 50                    # burst predictions with posterior draws
+python3 scripts/ppc_posterior.py $NJ 50 retest
+python3 scripts/sensitivity_checks.py 2000
