@@ -122,3 +122,6 @@ python3 scripts/spatial_benchmark.py 2000                  # scalp maps of coord
 python3 scripts/adjusted_topo_spectral.py 5000             # eye opening at zero change in peak height or background fraction
 python3 scripts/mech_nearfold.py                           # common near-fold selection, participant-grouped domain classifiers
 python3 scripts/metadata_checks.py                         # retest interval, treatment records, formal MDD diagnosis
+
+# 11. Apparent fold proximity under slow fluctuations of the bifurcation parameter
+python3 scripts/fold_bias_theory.py                        # moment-matching fits to superposed densities; timescale dependence in simulation
