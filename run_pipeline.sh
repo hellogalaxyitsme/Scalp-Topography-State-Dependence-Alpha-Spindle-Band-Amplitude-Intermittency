@@ -134,3 +134,6 @@ python3 scripts/obs_fragmentation.py sims $NJ              # contiguous versus f
 python3 scripts/obs_fragmentation.py summary
 python3 scripts/obs_fixedband.py sims 2000 $NJ             # fixed 11.5-14.5 Hz band on held-out spindle-band simulations
 python3 scripts/obs_fixedband.py summary
+python3 scripts/init_check.py spot $NJ                     # slow-switching example: bank initialization against the stationary density
+python3 scripts/init_check.py sims 4000 1000 $NJ          # paired simulations with both initializations
+python3 scripts/init_check.py summary
