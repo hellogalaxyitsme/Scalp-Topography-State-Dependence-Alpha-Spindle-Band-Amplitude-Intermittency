@@ -125,3 +125,12 @@ python3 scripts/metadata_checks.py                         # retest interval, tr
 
 # 11. Apparent fold proximity under slow fluctuations of the bifurcation parameter
 python3 scripts/fold_bias_theory.py                        # moment-matching fits to superposed densities; timescale dependence in simulation
+python3 scripts/fold_shift_direction.py                    # sign of the fold shift over the noisy focus; finite-record limit
+
+# 12. Integrator accuracy and observation process
+python3 scripts/integrator_check.py $NJ                    # Euler-Maruyama step rule against the exact stationary density
+python3 scripts/obs_fragmentation.py masks $NJ             # artifact masks of the healthy TDBRAIN recordings
+python3 scripts/obs_fragmentation.py sims $NJ              # contiguous versus fragmented processing of the same simulated signals
+python3 scripts/obs_fragmentation.py summary
+python3 scripts/obs_fixedband.py sims 2000 $NJ             # fixed 11.5-14.5 Hz band on held-out spindle-band simulations
+python3 scripts/obs_fixedband.py summary

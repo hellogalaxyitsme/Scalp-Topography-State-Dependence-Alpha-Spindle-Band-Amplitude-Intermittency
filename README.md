@@ -91,7 +91,8 @@ NJ=16 bash run_pipeline.sh      # NJ: number of worker processes for the paralle
 | 8. Mechanism discrimination | `mech_classifier.py`, `mech_domain.py`, `sbi_twinbank.py`, `mech_twin.py`, `mech_sleep_control.py`, `mech_twin_broad.py`, `mech_twin_summary.py`, `mech_state_checks.py` | `mech_twin_broad.json`, `mechtwb_*.csv`, `mech_state_checks.json` |
 | 9. Analysis populations | `population_counts.py` | `population_counts.json` |
 | 10. Sensitivity analyses | `tdbrain_checks.py`, `sleep_checks.py`, `delta_direct.py`, `ppc_recovery.py`, `ppc_posterior.py`, `sensitivity_checks.py`, `spatial_benchmark.py`, `adjusted_topo_spectral.py`, `mech_nearfold.py`, `metadata_checks.py` | `post_tdbrain_checks.csv`, `post_sleep_checks_*.csv`, `delta_direct.json`, `bursts_ppc_recovery.csv`, `bursts_ppc_post*.csv`, `sensitivity_checks.json`, `spatial_benchmark.json`, `adjusted_topo_spectral.json`, `mech_nearfold.json`, `metadata_checks.json` |
-| 11. Fold bias from parameter fluctuations | `fold_bias_theory.py` | `fold_bias_theory.json`, `fold_bias_theory_sim.csv` |
+| 11. Fold bias from parameter fluctuations | `fold_bias_theory.py`, `fold_shift_direction.py` | `fold_bias_theory.json`, `fold_bias_theory_sim.csv`, `fold_shift_direction.json`, `fold_shift_direction_map.csv`, `fold_shift_direction_sim.csv` |
+| 12. Integrator accuracy and observation process | `integrator_check.py`, `obs_fragmentation.py`, `obs_fixedband.py` | `integrator_check.json`, `obs_frag_masks.json`, `obs_fragmentation.csv`, `obs_fragmentation.json`, `obs_fixedband.csv`, `obs_fixedband.json` |
 
 Notes on stage 8:
 - `mech_classifier.py` and `mech_domain.py` train a classifier on the raw summary statistics. They also show that simulations and empirical surrogates are separable on these statistics.
@@ -113,6 +114,12 @@ Stage 10:
 
 Stage 11:
 - `fold_bias_theory.py` computes the constant-parameter coordinates closest (by moment matching) to the stationary power density averaged over Gaussian fluctuations of the bifurcation parameter, compares them with the second-order closed form, and simulates the normal form with Ornstein-Uhlenbeck modulation of the bifurcation parameter over a range of correlation times.
+- `fold_shift_direction.py` maps the exact shift of the fold coordinate over the noisy focus for two fluctuation strengths, compares its sign with the leading-order expression, and repeats the modulated simulations for a shorter record and correlation times up to the record length.
+
+Stage 12:
+- `integrator_check.py` integrates the normal form with the step rule of the simulation banks, and with steps 4 and 16 times smaller, and compares the power distribution with the exact stationary density.
+- `obs_fragmentation.py` cuts simulated signals with the artifact masks of TDBRAIN recordings (eyes closed and eyes open of the same participant and channel) and compares the coordinates and classifier scores with contiguous processing at the same retained duration.
+- `obs_fixedband.py` processes held-out spindle-band simulations in the fixed 11.5-14.5 Hz band of `sleep_checks.py` and in the peak-centred band, and compares the recovery of the fold coordinate.
 
 `direct_fit_baseline.py` compares the simulation-based estimates with the closed-form maximum-likelihood fit of the stationary power density, with and without background deconvolution, on held-out simulations and on the empirical endpoints of `descriptor_benchmark.py`.
 
