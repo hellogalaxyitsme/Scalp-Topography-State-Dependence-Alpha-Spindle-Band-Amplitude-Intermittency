@@ -191,6 +191,17 @@ def summary():
                                               frac_bistable=float(((aff.d_true > 0) & (aff.th_mu < 0)).mean()) if len(aff) else None,
                                               median_mu=float(aff.th_mu.median()) if len(aff) else None,
                                               median_c=float(aff.th_c.median()) if len(aff) else None)
+    # subsets of the constant-parameter draws defined by the estimates under the bank initialization;
+    # TDBRAIN region: central 90% of first-session posterior medians (mu -7.3..-3.1, c -0.3..5.2)
+    c = W[W.cls == "const"]
+    est = {"focus estimate (d_hat<0)": c.d_hat_bank < 0, "near-fold estimate": c.d_hat_bank.between(*NEAR),
+           "TDBRAIN region estimate": c.mu_hat_bank.between(-7.3, -3.1) & c.c_hat_bank.between(-0.3, 5.2)}
+    out["const, estimate subsets"] = {k: dict(n=int(m.sum()), frac_identical=float((c.dd[m] == 0).mean()),
+                                              mean_abs_diff=float(c.dd[m].abs().mean()), max_abs_diff=float(c.dd[m].abs().max()))
+                                      for k, m in est.items()}
+    out["affected (const, |diff|>0.5)"].update(d_hat_bank_p10=float(aff.d_hat_bank.quantile(0.1)),
+                                               d_hat_bank_p90=float(aff.d_hat_bank.quantile(0.9)),
+                                               min_true_c=float(aff.th_c.min()), n_oscillatory=int((aff.th_mu > 0).sum()))
     W.to_csv("results/init_check_paired.csv", index=False)
     json.dump(out, open("results/init_check.json", "w"), indent=1)
     print(json.dumps(out, indent=1))
